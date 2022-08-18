@@ -19,28 +19,27 @@ public class Calc {
             return;
         }
 
-        expr.opStr1 = expr.stringsArray[0];
+        expr.strOp1 = expr.stringsArray[0];
         expr.operation = expr.stringsArray[1];
-        expr.opStr2 = expr.stringsArray[2];
+        expr.strOp2 = expr.stringsArray[2];
 
-        expr.opStrIs(expr.opStr1);
-        expr.strIsLetter1 = expr.strIsLetter2;
-        expr.strIsDigit1 = expr.strIsDigit2;
-        expr.opStrIs(expr.opStr2);
+        expr.opStrIs(expr.strOp1);
+        expr.str1IsLetter = expr.str2IsLetter;
+        expr.str1IsDigit = expr.str2IsDigit;
+        expr.opStrIs(expr.strOp2);
 
-        if (!(expr.strIsLetter1 & expr.strIsLetter2) & !(expr.strIsDigit1 & expr.strIsDigit2)) {
+        if (!(expr.str1IsLetter & expr.str2IsLetter) & !(expr.str1IsDigit & expr.str2IsDigit)) {
             try {
                 throw new IOException();
             } catch (IOException e) {
                 System.out.println("Калькулятор может работать одновременно только с натуральными целыми арабскими или только с римскими цифрами.");
             }
         }
-
-        if (expr.strIsLetter1 & expr.strIsLetter2) {
-            expr.op1 = expr.checkRom(expr.opStr1);
-            expr.op2 = expr.checkRom(expr.opStr2);
+        if (expr.str1IsLetter & expr.str2IsLetter) {
+            expr.op1 = expr.checkRom(expr.strOp1);
+            expr.op2 = expr.checkRom(expr.strOp2);
             if (expr.op1 > 0 & expr.op2 > 0) {
-                expr.result = expr.calcArab(expr.op1, expr.op2);
+                expr.result = expr.calculate(expr.op1, expr.op2);
                 if (expr.result == -11) {
                     try {
                         throw new IOException();
@@ -56,14 +55,14 @@ public class Calc {
                         System.out.println("Результатом работы калькулятора с римскими числами может быть только положительное число.");
                     }
                 } else if (expr.result > 0) {
-                    System.out.println(expr.WorkCharSet[expr.result]);
+                    System.out.println(expr.RomanCharSet[expr.result]);
                 }
             }
-        } else if (expr.strIsDigit1 & expr.strIsDigit2) {
-            expr.op1 = expr.checkArab(expr.opStr1);
-            expr.op2 = expr.checkArab(expr.opStr2);
+        } else if (expr.str1IsDigit & expr.str2IsDigit) {
+            expr.op1 = expr.checkArab(expr.strOp1);
+            expr.op2 = expr.checkArab(expr.strOp2);
             if (expr.op1 > 0 & expr.op2 > 0) {
-                expr.result = expr.calcArab(expr.op1, expr.op2);
+                expr.result = expr.calculate(expr.op1, expr.op2);
                 if (expr.result == -11) {
                     try {
                         throw new IOException();
@@ -87,14 +86,14 @@ public class Calc {
     static class Expression {
         String keyIn;
         String keyInGood;
-        String opStr1;
-        String opStr2;
+        String strOp1;
+        String strOp2;
         boolean charIsLetter;
-        boolean strIsLetter2;
-        boolean strIsLetter1;
+        boolean str2IsLetter;
+        boolean str1IsLetter;
         boolean charIsDigit;
-        boolean strIsDigit2;
-        boolean strIsDigit1;
+        boolean str2IsDigit;
+        boolean str1IsDigit;
         String operation;
         int op1;
         int op2;
@@ -102,19 +101,19 @@ public class Calc {
         String[] stringsArray;
 
         void opStrIs(String s) {
-            strIsLetter2 = true;
-            strIsDigit2 = true;
+            str2IsLetter = true;
+            str2IsDigit = true;
             for (int i = 0; i < s.length(); i++) {
                 charIsLetter = Character.isLetter(s.charAt(i));
                 charIsDigit = Character.isDigit(s.charAt(i));
-                strIsLetter2 = strIsLetter2 & charIsLetter;
-                strIsDigit2 = strIsDigit2 & charIsDigit;
+                str2IsLetter = str2IsLetter & charIsLetter;
+                str2IsDigit = str2IsDigit & charIsDigit;
             }
         }
 
         int checkRom(String op) {
             for (int i = 1; i <= 10; i++)
-                if (op.equalsIgnoreCase(WorkCharSet[i])) return i;
+                if (op.equalsIgnoreCase(RomanCharSet[i])) return i;
             return -1;
         }
 
@@ -128,7 +127,7 @@ public class Calc {
             return -1;
         }
 
-        int calcArab(int a, int b) {
+        int calculate(int a, int b) {
             switch (operation) {
                 case ("+") -> result = a + b;
                 case ("-") -> result = a - b;
@@ -139,7 +138,7 @@ public class Calc {
             return result;
         }
 
-        final String[] WorkCharSet = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
+        final String[] RomanCharSet = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
                 "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX",
                 "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV",
                 "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI",
